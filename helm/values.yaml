@@ -1,0 +1,23 @@
+chart_name: vpn
+keycloak_proxy_image: quay.io/ukhomeofficedigital/go-keycloak-proxy:v2.1.0-rc2
+portal_image: quay.io/secureweb/openvpn-sso-portal:latest
+openvpn_image: quay.io/ukhomeofficedigital/openvpn:v2.4.2-r0
+sessions_image: quay.io/ukhomeofficedigital/openvpn-sessions:latest
+
+logout_url: https://auth.secureweb.ltd/auth/realms/secureweb/protocol/openid-connect/logout
+help_url: https://github.com/secureweb/openvpn-sso-portal/issues
+
+discovery_url: https://auth.secureweb.ltd/auth/realms/secureweb
+client_id: broker
+redirection_url: https://vpn.secureweb.ltd
+fqdn: vpn.secureweb.ltd
+vpn_remote: openvpn.secureweb.ltd
+vpn_port: 1194
+
+client_secret: [secret]
+
+dh_pem: [base64] 
+ca_pem: [base64] 
+ca_key: [base64] 
+vpn_key: [base64] 
+vpn_pem: [base64] 

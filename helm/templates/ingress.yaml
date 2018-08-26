@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.chart_name }}
+spec:
+  tls:
+  - hosts:
+    - {{ .Values.fqdn }}
+    secretName: {{ .Values.chart_name }}-tls
+  rules:
+  - host: {{ .Values.fqdn }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{ .Values.chart_name }}-portal
+          servicePort: 8000
+

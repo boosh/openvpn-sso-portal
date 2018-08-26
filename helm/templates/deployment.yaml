@@ -1,0 +1,102 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Values.chart_name }}
+  labels:
+    app: {{ .Values.chart_name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.chart_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.chart_name }}
+    spec:
+      containers:
+      - name: oidc
+        image: {{ .Values.keycloak_proxy_image }}
+        args:
+        - --config=/etc/config/keycloak.yml
+        env:
+        - name: GIN_MODE
+          value: release
+        - name: CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.chart_name }}
+              key: client-secret
+        securityContext:
+          runAsUser: 0
+        ports:
+        - name: http
+          containerPort: 8000
+        - name: https
+          containerPort: 443
+        volumeMounts:
+        - name: {{ .Values.chart_name }}-config
+          mountPath: /etc/config
+          readOnly: true
+      - name: portal
+        image: {{ .Values.portal_image }}
+        args:
+        - --config=/etc/config/portal.yml
+        env:
+        - name: GIN_MODE
+          value: release
+        volumeMounts:
+        - name: {{ .Values.chart_name }}-config
+          mountPath: /etc/config
+        - name: {{ .Values.chart_name }}-secrets
+          mountPath: /home/app/secrets
+        - name: {{ .Values.chart_name }}-profiles
+          mountPath: /home/app/profiles
+      - name: openvpn
+        image: {{ .Values.openvpn_image }}
+        env:
+        - name: OPENVPN_CONFIG
+          value: /etc/config/openvpn.conf
+        - name: OPENVPN_DISABLE_FORWARDING
+          value: "True"
+        - name: OPENVPN_CLIENT_CONNECT
+          value: /usr/local/bin/client_connected.sh
+        - name: OPENVPN_CLIENT_DISCONNECT
+          value: /usr/local/bin/client_disconnect.sh
+        ports:
+        - name: openvpn
+          containerPort: 1194
+        securityContext:
+          capabilities:
+            add:
+              - SYS_ADMIN
+              - NET_ADMIN
+              - MKNOD
+        volumeMounts:
+        - name: {{ .Values.chart_name }}-config
+          mountPath: /etc/config
+          readOnly: true
+        - name: {{ .Values.chart_name }}-secrets
+          mountPath: /etc/secrets
+          readOnly: true
+        - name: {{ .Values.chart_name }}-profiles
+          mountPath: /etc/openvpn/profiles
+      - name: openvpn-sessions
+        image: {{ .Values.sessions_image }}
+        args:
+        - -logtostderr=true
+        - -v=3
+        - -session-duration=3h
+        - -interval=5m
+      volumes:
+        - name: {{ .Values.chart_name }}-secrets
+          secret:
+            secretName: {{ .Values.chart_name }}
+            defaultMode: 0444
+        - name: {{ .Values.chart_name }}-config
+          configMap:
+            name: {{ .Values.chart_name }}
+            defaultMode: 0444
+        - name: {{ .Values.chart_name }}-profiles
+          emptyDir:
+            defaultMode: 0777

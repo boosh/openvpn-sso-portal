@@ -1,0 +1,29 @@
+{{ define "body" }}
+<div>VPN Profiles</div>
+<div class="profiles">
+    {{ range $p := .Profiles }}
+    {{ if eq $p.Permitted true }}
+    <div >
+        <a class="box item" href="/profile/{{ .Name }}/issue">
+            <div title="Click to download the VPN profile">
+                <span class="title">{{ .Description }}</span>
+                <span class="duration">{{ .Duration }} hours</span>
+            </div>
+        </a>
+    </div>
+    {{ end }}
+    {{ end }}
+    {{ range $p := .Profiles }}
+    {{ if eq $p.Permitted false }}
+    <div >
+        <a class="box item disabled" href="/profile/{{ .Name}}">
+            <div title="Click to view profile">
+                <span class="title">{{ .Description }}</span>
+                <span class="duration">{{ .Duration }} hours</span>
+            </div>
+        </a>
+    </div>
+    {{ end }}
+    {{ end }}
+</div>
+{{end}}

@@ -1,0 +1,43 @@
+{{ define "body" }}
+<div class="rules">
+  <div class="right" {>{{ .Description }} {{ .Roles }}</div>
+  <div>Firewall Rules</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Protocol</th>
+        <th>Destination</th>
+        <th>Port/s</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{ range $rule := .Rules }}
+      <tr>
+        <td>{{ $rule.Protocol }}</td>
+        <td>{{ $rule.Destination }}</td>
+        <td>{{ $rule.Port }}</td>
+        <td>{{ $rule.Action }}</td>
+      </tr>
+      {{ end }}
+    </tbody>
+  </table>
+  <div>Routing</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Route</th>
+        <th>Netmask</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{ range $r := .Routes }}
+      <tr>
+        <td>{{ $r.Route }}</td>
+        <td>{{ $r.Netmask }}</td>
+      </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div>
+{{ end }}

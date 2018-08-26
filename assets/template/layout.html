@@ -1,0 +1,45 @@
+<html>
+<head>
+  <title>{{ .Title }}</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="left">
+      <a href="/">
+      {{ .Brand }}
+      </a>
+    </div>
+    <div class="right">
+      {{ if .LogoutURL }}
+      <a class="box" href="{{ .LogoutURL }}">
+       Logout
+      </a>
+      {{ end }}
+    </div>
+  </header>
+  <sidebar>
+    <div class="person">{{ .Username }}</div>
+    <ul>
+        <li>
+            <a href="/">VPN Profiles</a>
+        </li>
+        <li>
+            <a href="/issued">Sessions Issued</a>
+        </li>
+        <li>
+            <a href="{{ .HelpURL }}">Help</a>
+        </li>
+    </ul>
+  </sidebar>
+  <content>
+    {{ template "body" . }}
+  </content>
+  <footer>
+      <div class="right">
+        <a href="https://github.com/secureweb/openvpn-sso-portal">openvpn-sso-portal</a>
+      </div>
+  </footer>
+</body>
+</html>
